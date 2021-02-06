@@ -5,7 +5,7 @@ import { ProjectName } from "../components/ProjectName";
 import { ToolButton } from "../components/ToolButton";
 import "../components/ToolIcon.scss";
 import { Tooltip } from "../components/Tooltip";
-import { loadFromJSON, saveAsJSON } from "../data";
+import { loadFromJSON, saveAsJSON, saveAsRecord } from "../data";
 import { t } from "../i18n";
 import useIsMobile from "../is-mobile";
 import { KEYS } from "../keys";
@@ -97,7 +97,7 @@ export const actionSaveScene = register({
   name: "saveScene",
   perform: async (elements, appState, value) => {
     try {
-      const { fileHandle } = await saveAsJSON(elements, appState);
+      const { fileHandle } = await saveAsRecord(elements, appState);
       return { commitToHistory: false, appState: { ...appState, fileHandle } };
     } catch (error) {
       if (error?.name !== "AbortError") {

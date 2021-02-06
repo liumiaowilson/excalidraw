@@ -610,7 +610,36 @@ class App extends React.Component<ExcalidrawProps, AppState> {
   );
 
   private initializeScene = async () => {
-    if ("launchQueue" in window && "LaunchParams" in window) {
+    const params = new URLSearchParams(window.location.search);
+    const recordId = params.get('recordId');
+
+    if(recordId) {
+        (window as any).$VFRM.Manager.getController('ExcalidrawController').load(recordId, (result: any, event: any) => {
+            if(event.status) {
+                if(result) {
+                    const blob = new Blob([result], { type: 'application/json' });
+                      loadFromBlob(blob, this.state)
+                        .then(({ elements, appState }) =>
+                          this.syncActionResult({
+                            elements,
+                            appState: {
+                              ...(appState || this.state),
+                              isLoading: false,
+                            },
+                            commitToHistory: true,
+                          }),
+                        )
+                        .catch((error) => {
+                          this.setState({ isLoading: false, errorMessage: error.message });
+                        });
+                }
+            }
+            else {
+                window.alert(`Error: ${event.message}`);
+            }
+        }, { escape: false });
+    }
+    else if ("launchQueue" in window && "LaunchParams" in window) {
       (window as any).launchQueue.setConsumer(
         async (launchParams: { files: any[] }) => {
           if (!launchParams.files.length) {

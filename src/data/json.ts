@@ -44,6 +44,29 @@ export const saveAsJSON = async (
   return { fileHandle };
 };
 
+export const saveAsRecord = async (
+  elements: readonly ExcalidrawElement[],
+  appState: AppState,
+) => {
+  const serialized = serializeAsJSON(elements, appState);
+  const params = new URLSearchParams(window.location.search);
+  const recordId = params.get('recordId');
+
+  await new Promise((resolve, reject) => {
+    (window as any).$VFRM.Manager.getController('ExcalidrawController').save(recordId, serialized, (result: any, event: any) => {
+        if(event.status) {
+            window.alert('Saved successfully');
+            resolve(null);
+        }
+        else {
+            reject(`Error: ${event.message}`);
+        }
+    }, { escape: false });
+  });
+
+  return { fileHandle: null };
+};
+
 export const loadFromJSON = async (localAppState: AppState) => {
   const blob = await fileOpen({
     description: "Excalidraw files",

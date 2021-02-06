@@ -12,7 +12,7 @@ import { canvasToBlob } from "./blob";
 import { serializeAsJSON } from "./json";
 
 export { loadFromBlob } from "./blob";
-export { loadFromJSON, saveAsJSON } from "./json";
+export { loadFromJSON, saveAsJSON, saveAsRecord } from "./json";
 
 export const exportCanvas = async (
   type: ExportType,
